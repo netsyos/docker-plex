@@ -17,27 +17,50 @@ RUN apt-get update
 
 # install packages
 RUN apt-get install -y \
-	avahi-daemon \
+#	avahi-daemon \
 	unrar \
-	udev
+	udev \
+	xmlstarlet \
+    uuid-runtime
 
-# install plex
-RUN curl -o \
-	/tmp/plexmediaserver.deb -L \
-	"${PLEX_INSTALL}" && \
- dpkg -i /tmp/plexmediaserver.deb && \
+RUN
+# Add user
+    useradd -U -d /config -s /bin/false plex && \
+    usermod -G users plex && \
 
-# change abc home folder to fix plex hanging at runtime with usermod
- usermod -d /app plex
+# Setup directories
+    mkdir -p \
+      /config \
+      /transcode \
+      /data
+
+ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
+    HOME="/config"
+
+## install plex
+#RUN curl -o \
+#	/tmp/plexmediaserver.deb -L \
+#	"${PLEX_INSTALL}" && \
+# dpkg -i /tmp/plexmediaserver.deb && \
+
+
+ARG TAG=plexpass
+
+COPY build /
+
+RUN /build/installPlex.sh
+
 
 RUN mkdir /etc/service/plex
 ADD service/plex.sh /etc/service/plex/run
 RUN chmod +x /etc/service/plex/run
 
-RUN mkdir /etc/service/avahi
-ADD service/avahi.sh /etc/service/avahi/run
-RUN chmod +x /etc/service/avahi/run
+#RUN mkdir /etc/service/avahi
+#ADD service/avahi.sh /etc/service/avahi/run
+#RUN chmod +x /etc/service/avahi/run
 
+ADD init/01_init_plex.sh /etc/my_init.d/01_init_plex.sh
+RUN chmod +x /etc/my_init.d/01_init_plex.sh
 
 # cleanup
 RUN rm -rf /etc/default/plexmediaserver
