@@ -30,12 +30,6 @@ RUN curl -o \
 # change abc home folder to fix plex hanging at runtime with usermod
  usermod -d /app plex
 
-# cleanup
-RUN rm -rf /etc/default/plexmediaserver
-
-# add local files
-COPY root/ /
-
 RUN mkdir /etc/service/plex
 ADD service/plex.sh /etc/service/plex/run
 RUN chmod +x /etc/service/plex/run
@@ -44,6 +38,9 @@ RUN mkdir /etc/service/avahi
 ADD service/avahi.sh /etc/service/avahi/run
 RUN chmod +x /etc/service/avahi/run
 
+
+# cleanup
+RUN rm -rf /etc/default/plexmediaserver
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
