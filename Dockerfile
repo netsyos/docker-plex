@@ -11,7 +11,6 @@ PLEX_MEDIA_SERVER_INFO_DEVICE=docker \
 PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS="6" \
 PLEX_MEDIA_SERVER_USER=plex
 
-RUN useradd -ms /bin/bash plex
 
 RUN apt-get update
 
@@ -23,9 +22,7 @@ RUN apt-get install -y \
 	xmlstarlet \
     uuid-runtime
 
-RUN
-# Add user
-    useradd -U -d /config -s /bin/false plex && \
+RUN useradd -U -d /config -s /bin/false plex && \
     usermod -G users plex && \
 
 # Setup directories
