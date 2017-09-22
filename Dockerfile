@@ -43,7 +43,7 @@ ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
 
 ARG TAG=plexpass
 
-COPY build /
+COPY build /build
 
 RUN /build/installPlex.sh
 
