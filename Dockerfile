@@ -35,16 +35,17 @@ ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
     HOME="/config"
 
 ## install plex
-#RUN curl -o \
-#	/tmp/plexmediaserver.deb -L \
-#	"${PLEX_INSTALL}" && \
-# dpkg -i /tmp/plexmediaserver.deb && \
+RUN curl -o \
+	/tmp/plexmediaserver.deb -L \
+	"${PLEX_INSTALL}" && \
+ dpkg -i /tmp/plexmediaserver.deb && \
+ rm -f /tmp/plexmediaserver.deb
 
 
-ARG TAG=plexpass
+#ARG TAG=plexpass
 
-COPY build /build
-RUN /build/installPlex.sh
+#COPY build /build
+#RUN /build/installPlex.sh
 
 
 RUN mkdir /etc/service/plex

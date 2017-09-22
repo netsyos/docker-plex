@@ -101,7 +101,7 @@ fi
 # Get server token and only turn claim token into server token if we have former but not latter.
 token="$(getPref "PlexOnlineToken")"
 if [ ! -z "${PLEX_CLAIM}" ] && [ -z "${token}" ]; then
-  echo "Attempting to obtain server token from claim token"
+  echo "Attempting to obtain server token from claim token ${PLEX_CLAIM}"
   loginInfo="$(curl -X POST \
         -H 'X-Plex-Client-Identifier: '${clientId} \
         -H 'X-Plex-Product: Plex Media Server'\
@@ -114,14 +114,18 @@ if [ ! -z "${PLEX_CLAIM}" ] && [ -z "${token}" ]; then
         "https://plex.tv/api/claim/exchange?token=${PLEX_CLAIM}")"
   token="$(echo "$loginInfo" | sed -n 's/.*<authentication-token>\(.*\)<\/authentication-token>.*/\1/p')"
 
-  if [ "$token" ]; then
-    echo "Token obtained successfully"
-    setPref "PlexOnlineToken" "${token}"
+  if [ "$token" ];
+    then
+      echo "Token obtained successfully"
+      setPref "PlexOnlineToken" "${token}"
+    else
+      echo "Token error ${token}"
   fi
 fi
 
 if [ ! -z "${ADVERTISE_IP}" ]; then
   setPref "customConnections" "${ADVERTISE_IP}"
+  echo "Setup advertise IP ${ADVERTISE_IP}"
 fi
 
 if [ ! -z "${ALLOWED_NETWORKS}" ]; then
