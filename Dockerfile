@@ -18,7 +18,8 @@ RUN apt-get update
 # install packages
 RUN apt-get install -y \
 	avahi-daemon \
-	unrar
+	unrar \
+	udev
 
 # install plex
 RUN curl -o \
