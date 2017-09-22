@@ -1,5 +1,5 @@
 FROM netsyos/base:latest
-
+ENV TERM="xterm"
 
 # global environment settings
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -44,9 +44,6 @@ ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
 ARG TAG=plexpass
 
 COPY build /build
-RUN chmod +x /build/installPlex.sh
-RUN /build/installPlex.sh
-RUN /build/installPlex.sh
 RUN /build/installPlex.sh
 
 

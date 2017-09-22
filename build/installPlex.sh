@@ -1,19 +1,35 @@
 #!/bin/bash
 
-echo "${TAG}" > /version.txt
-if [ "${TAG}" != "plexpass" ] && [ "${TAG}" != "public" ]; then
-  versionInfo="$(curl -s "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=8&distro=ubuntu&X-Plex-Token=${token}&version=${TAG}")"
-  remoteVersion=$(echo "${versionInfo}" | sed -n 's/.*Release.*version="\([^"]*\)".*/\1/p')
-  remoteFile=$(echo "${versionInfo}" | sed -n 's/.*file="\([^"]*\)".*/\1/p')
+function getVersionInfo {
+  local version="$1"
+  local token="$2"
+  declare -n remoteVersion=$3
+  declare -n remoteFile=$4
 
-  if [ -z "${remoteVersion}" ] || [ -z "${remoteFile}" ]; then
-    echo "Could not get install version"
-    exit 1
+  local versionInfo
+
+  if [ "${version,,}" = "plexpass" ]; then
+    versionInfo="$(curl -s "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=8&distro=ubuntu&X-Plex-Token=${token}")"
+  elif [ "${version,,}" = "public" ]; then
+    versionInfo="$(curl -s "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=16&distro=ubuntu")"
+  else
+    versionInfo="$(curl -s "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=8&distro=ubuntu&X-Plex-Token=${token}&version=${version}")"
   fi
 
-  echo "Atempting to install: ${remoteVersion}"
-  curl -J -L -o /tmp/plexmediaserver.deb "https://plex.tv/${remoteFile}"
-  last=$?
+  # Get update info from the XML.  Note: This could countain multiple updates when user specifies an exact version with the lowest first, so we'll use first always.
+  remoteVersion=$(echo "${versionInfo}" | sed -n 's/.*Release.*version="\([^"]*\)".*/\1/p')
+  remoteFile=$(echo "${versionInfo}" | sed -n 's/.*file="\([^"]*\)".*/\1/p')
+}
+
+
+function installFromUrl {
+  installFromRawUrl "https://plex.tv/${1}"
+}
+
+function installFromRawUrl {
+  local remoteFile="$1"
+  curl -J -L -o /tmp/plexmediaserver.deb "${remoteFile}"
+  local last=$?
 
   # test if deb file size is ok, or if download failed
   if [[ "$last" -gt "0" ]] || [[ $(stat -c %s /tmp/plexmediaserver.deb) -lt 10000 ]]; then
@@ -23,4 +39,20 @@ if [ "${TAG}" != "plexpass" ] && [ "${TAG}" != "public" ]; then
 
   dpkg -i --force-confold /tmp/plexmediaserver.deb
   rm -f /tmp/plexmediaserver.deb
+}
+
+echo "${TAG}" > /version.txt
+if [ ! -z "${URL}" ]; then
+  echo "Attempting to install from URL: ${URL}"
+  installFromRawUrl "${URL}"
+elif [ "${TAG}" != "plexpass" ] && [ "${TAG}" != "public" ]; then
+  getVersionInfo "${TAG}" "" remoteVersion remoteFile
+
+  if [ -z "${remoteVersion}" ] || [ -z "${remoteFile}" ]; then
+    echo "Could not get install version"
+    exit 1
+  fi
+
+  echo "Attempting to install: ${remoteVersion}"
+  installFromUrl "${remoteFile}"
 fi
