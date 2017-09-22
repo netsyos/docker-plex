@@ -46,6 +46,8 @@ ARG TAG=plexpass
 COPY build /build
 RUN chmod +x /build/installPlex.sh
 RUN /build/installPlex.sh
+RUN /build/installPlex.sh
+RUN /build/installPlex.sh
 
 
 RUN mkdir /etc/service/plex
