@@ -9,7 +9,7 @@ env:
   - secure: nFDpaindFGRFQD/LWnm+e0H7eiAAtLKT+K+PlnKdhzKC2/g1rIUiUrlnX/cenRQMlx3uSU6qpU89dgJPvgsMozwaigbm9HHr+kAY8z8jf3PTzhRiwtKXpaKQEB7ndfYYDB2kSG2xTZ3P6PSTxRfuROHudEPq08lXkpzGw+uzMmWUhA+oZOPbT7ZzqwGVWZeqSFQE5wMRvwUmI37xmot2sh85uGSUejlBQSheQ6rCOZS37XUeoJFDHmXMDswcz7aI5gHA/I7+P0bMuDLaTo41io/P7hErTb/4PzUfUL7aFk7WRfMCWUT/gg62pdyXkhL/0qdNuHHDRTmcilEBrAM1gdVnMFUvsdfGtqKWcMqjUcNGbVCPB8lpQwaED5XT/CHRnWchfGomKNjVycfM47qzGspt7YJGVr1DF5VvS9TAuuY9u2ppBqQpEAq8mOomLudefwbuAuccfXU/PvAyZrmKk+Wj/5at4++8KULbYcwQ7BHYLVVI3KsUJNoQQtCrSe0pUyHsxfqpyZcd7AaJ3RMEOBX0gZg5yg9xFnrsQRhH5+Y0uSdxC0nXGgQiL7fEefe/ds4Zmm3dJvaKk6tKKTvUVjXEufPkTTagQdP2VVl7oB+dzM3jyN+pxnc5ank6njRFdiVmkVmMOJohrJM8AiuxK//Fr+XMfaDqbGgW0fSY0Y0=
 script:
 - ls -alh
-- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+- docker login -u $DOCKER_USER -p $DOCKER_PASS
 - export REPO=netsyos/plex
 - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH;
   fi`
