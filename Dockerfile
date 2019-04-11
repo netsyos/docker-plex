@@ -17,6 +17,7 @@ RUN apt-get update
 # install packages
 RUN apt-get install -y \
 #	avahi-daemon \
+    sudo \
 	unrar \
 	udev \
 	xmlstarlet \
